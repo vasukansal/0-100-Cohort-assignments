@@ -45,5 +45,58 @@
   const app = express();
   
   app.use(bodyParser.json());
+
+  const todoitems=[{"Study":"Do Academics","completed":false},{"Gym":"Good Physique + recording clips","completed":false},{"Editing":"Larn and try new things","completed":false},{"Pray":"Mental Peace :)","completed":false}]
+  const idarray=[0,1,2,3]
+  app.get('/todos',function(req,res){
+    res.json(todoitems)
+  })
+
+  app.get('/todos/:id',function(req,res){
+    const idd=req.params.id
+    idarray.forEach(number => {
+      if(idd==number){
+        res.json(todoitems[idd])
+      }
+    });
+    res.status(404).send("Incorrect id given")
+  })
+
+  app.post('/todos',function(req,res){
+    const bath=req.body.bath;
+    const completed=req.body.completed;
+    const newitem= {"bath":bath,"completed":completed}
+    todoitems.push(newitem)
+    idarray.push(4)
+    res.json("Added!!")
+  })
+
+  app.put('/todos/:id',function(req,res){
+    const idgiven=req.params.id;
+    idarray.forEach(number => {
+      if(idgiven==number){
+        todoitems[idgiven].completed=true
+        return res.status(200).send("Updated")
+      }
+    });
+    return res.status(400).send("ID not found");
+  })
+
+  app.delete('/todos/:id',function(req,res){
+    const idgiven=req.params.id;
+    idarray.forEach(number => {
+      if(idgiven==number){
+        todoitems.splice(idgiven,1)
+        idarray.splice(idgiven,1)
+        return res.status(200).send("Deleted!!")
+      }
+    });
+    return res.status(404).send("ID not found")
+  })
+
+  app.all('*',function(req,res){
+    res.status(404).send("Route Not Found")
+  })
+app.listen(3000)
   
-  module.exports = app;
+  // module.exports = app;
