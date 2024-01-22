@@ -17,5 +17,59 @@ const fs = require('fs');
 const path = require('path');
 const app = express();
 
+app.get('/files',function(req,res){
+  let filearray=[]
+//   fs.readdirSync('./files/',(err,files)=>{
+//     files.forEach((file)=> {
+//       let filedetails= fs.lstatSync(path.resolve(direcotry, file))
+//       if(filedetails.isDirectory()){
+//         console.log(file)                                               !!!!!!!!!!! WRONG CODE !!!!!!!!!!!!!!
+//         filearray.push(file+" (Directory)")
+//       }
+//       else{
+//         console.log(file)
+//         filearray.push(file)
+//       }
+//     });
+//   } )
+//   console.log("DONE")
+//   console.log(filearray)
+//   res.json({filearray}) 
+// })
+const files=fs.readdirSync('./files/');  //files -> {a.txt, b.txt}
+files.forEach((file)=>{
+  let filedetails = fs.lstatSync(path.resolve("./files/", file));
+  if (filedetails.isDirectory()) {
 
+
+    filearray.push(file + " (Directory)");
+  } else {
+    filearray.push(file);
+  }
+    console.log("DONE")
+    console.log(filearray)
+   
+    
+})
+ res.json( filearray );
+})
+
+
+app.get('/files/:filename',function(req, res){
+
+  const  filen=req.params.filename;
+
+  fs.readFile('./files/'+filen, 'utf-8', (err, data) => {
+  if (err) {
+    return res.status(404).send("FileNotFound")
+  }
+  else{res.json(data);}
+
+})})
+app.all('*',function(req,res){
+  res.status(404).send("Route not Found")
+})
+
+
+app.listen(3000)
 module.exports = app;
